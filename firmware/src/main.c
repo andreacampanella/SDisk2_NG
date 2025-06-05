@@ -385,7 +385,9 @@ void init(char splash)
 
 	if (splash)
 	{
+		
 		ssd1306_init();
+		
 		ssd1306_clear();
 		ssd1306_gotoxy(0, 0);
 		logo();
@@ -534,7 +536,7 @@ void set_contrast()
 	ssd1306_underline();
 	ssd1306_put_p(CONT);
 	ssd1306_underline();
-	icons(3, 4, 5); // 5-enter, 4-down, 3-up
+	icons(3, 4, 5); // 3 up, 4 down , 5 enter
 
 	ssd1306_gotoxy(0, 2);
 	ssd1306_put_p(VALUE);
@@ -631,6 +633,7 @@ void set_contrast()
 // Setup Page
 void setup()
 {
+		
 	ssd1306_clear();
 	ssd1306_gotoxy(0, 0);
 	ssd1306_underline();
@@ -679,6 +682,8 @@ void setup()
 					ssd1306_inverse();
 			}
 		}
+
+		
 		if (up_is_pressed())
 		{
 			while (up_is_pressed())
@@ -748,7 +753,7 @@ void set_speed()
 	ssd1306_underline();
 	ssd1306_put_p(DLAY);
 	ssd1306_underline();
-	icons(3, 5, 4); // 5-setup, 4-Disk, 3-last Disk
+	icons(3, 4, 5); // 5-setup, 4-Disk, 3-last Disk
 	ssd1306_gotoxy(0, 3);
 	ssd1306_put_p(VALUE);
 	ssd1306_put_i(SD_speed);
