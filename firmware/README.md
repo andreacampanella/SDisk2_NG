@@ -22,6 +22,11 @@ Note. this fork only support the OLED version, for LCD and Nokia Version, please
 
   Photos and schematics in the PCB section.
 
+## Build
+
+'make build' will build the firmware, 'make flash' will flash it to the board
+
+
 ## Formatting the SD card
 
 You can use this version of the firmware with standard SD cards as well as with SDHC
