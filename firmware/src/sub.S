@@ -49,8 +49,8 @@ I recommend you to replace it with 27 MHz,
 or ask Nishida Radio.
 if you don't want to replace it, change the following to
 */
-//.equ CRYSTAL, 25
-.equ CRYSTAL, 27
+.equ CRYSTAL, 25
+//.equ CRYSTAL, 27
 
 .equ PINB, 0x03
 .equ DDRB, 0x04

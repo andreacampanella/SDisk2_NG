@@ -2,6 +2,10 @@
 	"folders": [
 		{
 			"path": "..\\.."
+		},
+		{
+			"name": "SDisk2",
+			"path": "../../../../../../../home/greg/Documents/PlatformIO/Projects/SDisk2"
 		}
 	],
 	"settings": {

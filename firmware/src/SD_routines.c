@@ -3,7 +3,7 @@
 SDISK II LCD Firmware
 
 2010.11.11 by Koichi Nishida
-2012.01.26 by Fábio Belavenuto
+2012.01.26 by Fï¿½bio Belavenuto
 2015.07.02 by Alexandre Suaide
 
 -------------------------------------
@@ -17,7 +17,7 @@ FAT16 and FAT32 disks should have at least 64 blocks per cluster
 */
 
 /*
-2012.01.26 by Fábio Belavenuto
+2012.01.26 by Fï¿½bio Belavenuto
 Added support for image exchange using a button added in the Brazilian version by Victor Trucco
 Added support for a 16x2 LCD
 */
@@ -141,6 +141,8 @@ unsigned char SD_init(void)
 		SDHC_flag = 0;
 		shift = 9;
 		
+
+
 		if (SD_version == SD_RAW_SPEC_2)
 		{		
 			do

@@ -56,18 +56,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <util/delay.h>
 #include <avr/eeprom.h>
 #include "string.h"
-
 #include "oled.h"
-
 #include "SPI_routines.h"
 #include "SD_routines.h"
 #include "FAT32.h"
 
 #define MAXNIC           4
 
-#define enter_is_pressed() bit_is_set(ENTER_PORT,ENTER_BIT)
-#define down_is_pressed()  bit_is_set(DOWN_PORT,DOWN_BIT)
-#define up_is_pressed()    bit_is_set(UP_PORT,UP_BIT)
+#define enter_is_pressed() bit_is_clear(ENTER_PORT,ENTER_BIT)
+#define down_is_pressed()  (bit_is_clear(DOWN_PORT,DOWN_BIT)*(flip_buttons==0) | bit_is_clear(UP_PORT,UP_BIT)*(flip_buttons==1))
+#define up_is_pressed()    (bit_is_clear(UP_PORT,UP_BIT)*(flip_buttons==0) | bit_is_clear(DOWN_PORT,DOWN_BIT)*(flip_buttons==1))
 #define diskII_disable()   bit_is_set(DISKII_PIN,DISKII_ENABLE)
 
 #define CHECKSUM_CONFIG 0X01AB02CD
@@ -110,6 +108,5 @@ int             main(void);
 void            set_contrast();
 void            setup();
 void            icons(unsigned char i1, unsigned char i2, unsigned char i3);
-
 
 #endif

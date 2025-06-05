@@ -39,6 +39,9 @@ void ssd1306_contrast(unsigned char value)
     ssd1306_contr = value;
 }
 
+
+
+
 void ssd1306_init()
 {
     i2c_init();
@@ -52,6 +55,7 @@ void ssd1306_init()
     ssd1306_command(0x0);                                   // no offset  
     ssd1306_command(SSD1306_SETSTARTLINE | 0x0);            // line #0   
     ssd1306_command(SSD1306_CHARGEPUMP);                    // 0x8D
+    
     ssd1306_command(0x14);                                  // using internal VCC 
     ssd1306_command(SSD1306_MEMORYMODE);                    // 0x20
     ssd1306_command(0x00);                                  // 0x00 horizontal addressing  
@@ -69,14 +73,16 @@ void ssd1306_init()
     ssd1306_command(SSD1306_DISPLAYALLON_RESUME);           // 0xA4  
     ssd1306_command(SSD1306_NORMALDISPLAY);                 // 0xA6
     ssd1306_command(SSD1306_DISPLAYON);                     //switch on OLED
+    
     ssd1306_contr = 0xCF;
     oled_contrast = ssd1306_contr;
-	  ssd1306_offset = 2;
+	  ssd1306_offset = 0;   // Changed from 2 due to screen issue
     ssd1306_inv = 0;
     ssd1306_under = 0;
     ssd1306_over = 0;
 	  ssd1306_screenUp();
 }
+
 
 void ssd1306_clear()
 {

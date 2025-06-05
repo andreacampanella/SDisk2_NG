@@ -3,7 +3,7 @@
 SDISK II LCD Firmware
 
 2010.11.11 by Koichi Nishida
-2012.01.26 by Fábio Belavenuto
+2012.01.26 by Fï¿½bio Belavenuto
 2015.07.02 by Alexandre Suaide
 
 -------------------------------------
@@ -17,7 +17,7 @@ FAT16 and FAT32 disks should have at least 64 blocks per cluster
 */
 
 /*
-2012.01.26 by Fábio Belavenuto
+2012.01.26 by Fï¿½bio Belavenuto
 Added support for image exchange using a button added in the Brazilian version by Victor Trucco
 Added support for a 16x2 LCD
 */
@@ -70,7 +70,7 @@ unsigned char FAT_init(void)
 	
 	SD_readSingleBlock(0);
 	bpb1 = (struct BS_Structure_1 *)buffer;
-	if(bpb1->jumpBoot[0]!=0xE9 && bpb1->jumpBoot[0]!=0xEB)   
+	if(bpb1->jumpBoot[0]!=0xE9 && bpb1->jumpBoot[0]!=0xEB)   // check if boot sector
 	{
 		mbr = (struct MBRinfo_Structure *) buffer;   
 		if(mbr->signature != 0xaa55)
@@ -80,7 +80,7 @@ unsigned char FAT_init(void)
 		}
 		partition = (struct partitionInfo_Structure *)(mbr->partitionData);
 		FAT_partitionType = partition->type;
-		
+
 		SD_readSingleBlock(partition->firstSector);
 		bpb1 = (struct BS_Structure_1 *)buffer;
 		if(bpb1->jumpBoot[0]!=0xE9 && bpb1->jumpBoot[0]!=0xEB)
@@ -88,6 +88,16 @@ unsigned char FAT_init(void)
 			errorCode = 3;
 			return 0;
 		}
+
+	//	if(FAT_partitionType == 0xff) {
+	//      lcd_clear();
+	//	  lcd_put_i(FAT_partitionType);
+    //      while(1);
+	//	}
+
+
+
+
 		if((FAT_partitionType != PARTITION_TYPE_FAT32) && (FAT_partitionType != PARTITION_TYPE_FAT16))
 		{
 			errorCode = 4;

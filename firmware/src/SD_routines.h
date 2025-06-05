@@ -98,7 +98,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #define READ_OCR				 CMD58
 #define CRC_ON_OFF               CMD59
 
-#define SD_ejected()             bit_is_clear(SD_PIN,SD_EJECT)
+#define SD_ejected()             bit_is_set(SD_PIN,SD_EJECT)
 #define SD_select_card()         clear_bit(SD_PORT,SD_CS)
 #define SD_unselect_card()       set_bit(SD_PORT,SD_CS)
 
