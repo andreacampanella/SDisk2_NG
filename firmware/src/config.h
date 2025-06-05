@@ -47,7 +47,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #define nop() __asm__ __volatile__ ("nop")
 #define clear_bit(a,z) (a &= ~_BV(z))
 #define set_bit(a,z) (a |= _BV(z))
-//#define LCD_FLIP_ADD 0
+#define LCD_FLIP_ADD 0
+
 
 /*
 This is the second version of SDISK II built by Victor Trucco
@@ -57,11 +58,10 @@ for firmware update.
 DO NOT CHANGE THIS unless you really know what you are doing
 */
 
-	#define _OLED_
 	// OLED pins
-	#define SDA_PIN 5
+	#define SDA_PIN 4
 	#define SDA_PORT PORTC
-	#define SCL_PIN 4
+	#define SCL_PIN 5
 	#define SCL_PORT PORTC
 	#define SSD1306_ADDRESS 0x3C
 
@@ -86,9 +86,10 @@ DO NOT CHANGE THIS unless you really know what you are doing
 	// SD LED
 	#define SD_LED_PORT PORTB
 	#define SD_LED_PORTD DDRB
-	#define SD_LED 4
+	#define SD_LED 4  
+	//5
 
-	// BOTOES
+	// Buttons
 	#define ENTER_PORT       PIND
 	#define DOWN_PORT        PIND
 	#define UP_PORT          PINB
@@ -99,7 +100,7 @@ DO NOT CHANGE THIS unless you really know what you are doing
 	#define DOWN_BIT         DDD7
 	#define UP_BIT           DDB5
 
-	// PINOS PARA A DISK II - APPLE
+	// Pins for Apple DISK II
 	#define DISKII_PIN       PINC
 	#define DISKII_ENABLE    DDC0
 
