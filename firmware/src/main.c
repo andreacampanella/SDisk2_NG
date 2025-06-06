@@ -837,146 +837,175 @@ void set_speed()
 // Nic Selection Page
 void select_nic()
 {
-	int i = 0, j = 0, k = 0;
-	char name1[8];
-	nfiles = 0;
-	buffer = &writeData[0][0];
-	files_id = &writeData[2][0];
-	lastBlockRead = -1;
-	buffClear();
+    int i = 0, j = 0, k = 0;
+    char name1[8];
 
-	ssd1306_underline();
-	ssd1306_gotoxy(0, 0);
-	ssd1306_put_p(MSG7);
-	ssd1306_underline();
-	icons(3, 4, 5); // 3-up, 4-down, 5-enter
-	for (i = 1; i <= 5; i++)
-	{
-		ssd1306_gotoxy(0, i);
-		ssd1306_put_p(EMP);
-	}
-	ssd1306_gotoxy(0, 3);
-	ssd1306_put_p(MSGC);
+    nfiles = 0;
+    buffer = &writeData[0][0];
+    files_id = &writeData[2][0];
+    lastBlockRead = -1;
+    buffClear();
 
-	i = 0;
+    ssd1306_clear();
+    ssd1306_gotoxy(0, 0);
+    ssd1306_put_p(MSG7); // "SELECT NIC"
+    icons(3, 4, 5); // Up, Down, Enter icons
 
-	do
-	{
-		struct dir_Structure *file = getFile(i);
-		if (file)
-			if (file->name[0] == 0x00)
-				break; // last file on directory
-		if (is_a_nic(file) || is_a_dir(file))
-		{
-			files_id[nfiles] = i;
-			nfiles++;
-		}
-		i++;
-	} while (nfiles < MAXFILES && i < MAXFILES * 2);
+    // Build file list
+    i = 0;
+    do
+    {
+        struct dir_Structure *file = getFile(i);
+        if (file && file->name[0] == 0x00)
+            break;
 
-	if (nfiles == 0)
-	{
-		ssd1306_gotoxy(0, 3);
-		ssd1306_put_p(MSG8);
-		return;
-	}
+        if (is_a_nic(file) || is_a_dir(file))
+        {
+            files_id[nfiles] = i;
+            nfiles++;
+        }
+        i++;
+    } while (nfiles < MAXFILES && i < MAXFILES * 2);
 
-	ssd1306_gotoxy(0, 3);
-	ssd1306_put_p(MSGD);
+    if (nfiles == 0)
+    {
+        ssd1306_gotoxy(0, 2);
+        ssd1306_put_p(MSG8); // "Nothing found here!"
+        return;
+    }
 
-	// sort list of files in the directory
-	if (nfiles > 1)
-	{
-		for (i = 0; i <= (nfiles - 2); i++)
-		{
-			for (j = 1; j <= (nfiles - i - 1); j++)
-			{
-				struct dir_Structure *file1 = getFile(files_id[j]);
-				strlcpy(name1, (const char *)file1->name, 8);
-				struct dir_Structure *file2 = getFile(files_id[j - 1]);
-				if (memcmp(name1, file2->name, 8) < 0)
-				{
-					k = files_id[j];
-					files_id[j] = files_id[j - 1];
-					files_id[j - 1] = k;
-				}
-			}
-		}
-	}
+    // Sort file list
+    if (nfiles > 1)
+    {
+        for (i = 0; i <= (nfiles - 2); i++)
+        {
+            for (j = 1; j <= (nfiles - i - 1); j++)
+            {
+                struct dir_Structure *file1 = getFile(files_id[j]);
+                strlcpy(name1, (const char *)file1->name, 8);
+                struct dir_Structure *file2 = getFile(files_id[j - 1]);
+                if (memcmp(name1, file2->name, 8) < 0)
+                {
+                    k = files_id[j];
+                    files_id[j] = files_id[j - 1];
+                    files_id[j - 1] = k;
+                }
+            }
+        }
+    }
 
-	int index = 0;
-	for (i = 0; i < nfiles; i++)
-		if (selected_file_id == files_id[i])
-			index = i;
-	int index_old = -1;
-	while (1)
-	{
-		configButtons();
-		if (SD_ejected())
-			return; // card is removed
-		if (down_is_pressed())
-		{
-			while (down_is_pressed())
-			{
-			}
-			_delay_ms(DEBOUNCE);
+    // Display configuration
+    #define FILES_PER_PAGE 6
+    int index = 0;
+    for (i = 0; i < nfiles; i++)
+    {
+        if (selected_file_id == files_id[i])
+        {
+            index = i;
+            break;
+        }
+    }
+    int window_start = 0;
+    int index_old = -1;
+    int window_old = -1;
 
-			index++;
-			if (index == nfiles)
-				index = 0;
-		}
-		if (up_is_pressed())
-		{
-			while (up_is_pressed())
-			{
-			}
-			_delay_ms(DEBOUNCE);
+    while (1)
+    {
+        configButtons();
+        if (SD_ejected())
+            return;
 
-			index--;
-			if (index < 0)
-				index = nfiles - 1;
-		}
-		if (enter_is_pressed())
-		{
-			while (enter_is_pressed())
-			{
-			}
-			_delay_ms(DEBOUNCE);
-			struct dir_Structure *file = getFile(files_id[index]);
-			if (is_a_dir(file))
-			{
-				cd(file);
-				select_nic();
-				return;
-			}
-			else
-			{
-				mount_nic_image(files_id[index], file);
-				return;
-			}
-			return;
-		}
-		if (index != index_old)
-		{
-			index_old = index;
-			struct dir_Structure *file = getFile(files_id[index]);
+        if (down_is_pressed())
+        {
+            while (down_is_pressed()) { }
+            _delay_ms(DEBOUNCE);
 
-			ssd1306_gotoxy(0, 3);
-			if (is_a_dir(file))
-				ssd1306_icon(6);
-			else
-				ssd1306_icon(1);
-			unsigned char count = 0;
-			for (int i = 0; i < 8; i++)
-				if (file->name[i] != ' ')
-				{
-					ssd1306_char(file->name[i]);
-					count++;
-				}
-			for (int i = count; i < 16; i++)
-				ssd1306_char(' ');
-		}
-	}
+            index++;
+            if (index >= nfiles)
+                index = 0;
+        }
+        if (up_is_pressed())
+        {
+            while (up_is_pressed()) { }
+            _delay_ms(DEBOUNCE);
+
+            if (index == 0)
+                index = nfiles - 1;
+            else
+                index--;
+        }
+        if (enter_is_pressed())
+        {
+            while (enter_is_pressed()) { }
+            _delay_ms(DEBOUNCE);
+
+            struct dir_Structure *file = getFile(files_id[index]);
+            if (is_a_dir(file))
+            {
+                cd(file);
+                select_nic();
+                return;
+            }
+            else
+            {
+                mount_nic_image(files_id[index], file);
+                return;
+            }
+        }
+
+        // Adjust display window
+        if (index < window_start)
+            window_start = index;
+        else if (index >= window_start + FILES_PER_PAGE)
+            window_start = index - (FILES_PER_PAGE - 1);
+
+        if (index != index_old || window_start != window_old)
+        {
+            index_old = index;
+            window_old = window_start;
+
+            // Clear file area (lines 1 to 6 now)
+            for (int line = 0; line < FILES_PER_PAGE; line++)
+            {
+                ssd1306_gotoxy(0, line + 1); // Start at line 1
+                ssd1306_put_p(EMP);
+            }
+
+            // Draw current page
+            for (int i = 0; i < FILES_PER_PAGE; i++)
+            {
+                int file_idx = window_start + i;
+                if (file_idx >= nfiles)
+                    break;
+
+                struct dir_Structure *file = getFile(files_id[file_idx]);
+                ssd1306_gotoxy(0, i + 1); // Line 1 upward
+
+                if (file_idx == index)
+                    ssd1306_inverse(); // Highlight selected file
+
+                if (is_a_dir(file))
+                    ssd1306_icon(6);
+                else
+                    ssd1306_icon(1);
+
+                unsigned char count = 0;
+                for (int j = 0; j < 8; j++)
+                {
+                    if (file->name[j] != ' ')
+                    {
+                        ssd1306_char(file->name[j]);
+                        count++;
+                    }
+                }
+                for (int j = count; j < 16; j++)
+                    ssd1306_char(' ');
+
+                if (file_idx == index)
+                    ssd1306_inverse(); // Remove highlight
+            }
+        }
+    }
 }
 
 void find_previous_nic()
